@@ -9,10 +9,10 @@ export default function MQTTDashboard() {
 
   useEffect(() => {
     // Replace with your MQTT broker WebSocket URL
-    const brokerUrl = "wss://broker.hivemq.com:8884/mqtt";
+    const brokerUrl = process.env.NEXT_PUBLIC_MQTT_BROKER_URL;
 
     // Topic to subscribe to
-    const topic = "broken99records/esp32/#";
+    const topic = process.env.NEXT_PUBLIC_MQTT_TOPIC;
 
     const client = mqtt.connect(brokerUrl);
 
@@ -63,16 +63,14 @@ export default function MQTTDashboard() {
         </h1>
 
         <div className="mb-6">
-          <span className="font-semibold text-black">
-            Connection Status:
-          </span>{" "}
+          <span className="font-semibold text-black">Connection Status:</span>{" "}
           <span
             className={`rounded px-3 py-1 text-black ${
               status === "Connected"
                 ? "bg-green-500"
                 : status === "Error"
-                ? "bg-red-500"
-                : "bg-gray-500"
+                  ? "bg-red-500"
+                  : "bg-gray-500"
             }`}
           >
             {status}
@@ -85,9 +83,7 @@ export default function MQTTDashboard() {
           </h2>
 
           {messages.length === 0 ? (
-            <p className="text-black">
-              Waiting for MQTT messages...
-            </p>
+            <p className="text-black">Waiting for MQTT messages...</p>
           ) : (
             <ul className="space-y-2">
               {messages.map((msg, index) => (
@@ -105,4 +101,3 @@ export default function MQTTDashboard() {
     </main>
   );
 }
-
