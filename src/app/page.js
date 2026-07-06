@@ -14,13 +14,6 @@ export default function MQTTDashboard() {
   const client = mqtt.connect(brokerUrl);
 
   useEffect(() => {
-    
-
-    // Revert to "unlit" state after 20 seconds (well before the next 10s message)
-      const timer = setTimeout(() => {
-        setIsLit(false);
-      }, 20000);
-
     client.on("connect", () => {
       console.log("Connected to MQTT broker");
       setStatus("Connected");
@@ -34,12 +27,19 @@ export default function MQTTDashboard() {
       });
     });
 
+    // Revert to "unlit" state after 20 seconds (well before the next 10s message)
+    let timer = setTimeout(() => {
+      setIsLit(false);
+      console.log("Reverted to unlit state after 20 seconds");
+    }, 15000);
+
     client.on("message", (receivedTopic, payload) => {
       const message = payload.toString();
       console.log(`Message from ${receivedTopic}:`, message);
 
       // Trigger the "lit" state animation/display
       setIsLit(true);
+      console.log("Room is now lit due to incoming message");
       clearTimeout(timer); // Clear the previous timer to avoid premature unlit state
 
       setMessages((prev) => [
@@ -47,11 +47,11 @@ export default function MQTTDashboard() {
         ...prev,
       ]);
 
-      
+      timer = setTimeout(() => {
+        setIsLit(false);
+              console.log("Reverted to secondary timer unlit state after 20 seconds");
 
-      return () => {
-        clearTimeout(timer);
-      }
+      }, 15000);
     });
 
     client.on("error", (err) => {
@@ -84,8 +84,8 @@ export default function MQTTDashboard() {
               status === "Connected"
                 ? "bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"
                 : status === "Error"
-                ? "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"
-                : "bg-gray-600"
+                  ? "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"
+                  : "bg-gray-600"
             }`}
           >
             {status}
@@ -94,7 +94,6 @@ export default function MQTTDashboard() {
 
         {/* Combined Interactive Scene & Giphys */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          
           {/* Room Environment Image Viewport */}
           <div className="md:col-span-2 relative overflow-hidden rounded-xl border-2 border-gray-700 shadow-inner h-[400px]">
             <Image
@@ -114,7 +113,7 @@ export default function MQTTDashboard() {
             <h3 className="text-sm font-semibold tracking-wide text-gray-400 uppercase mb-2">
               System Mood
             </h3>
-            
+
             <div className="w-full flex-grow flex items-center justify-center bg-black/40 rounded-lg p-2 overflow-hidden">
               {isLit ? (
                 /* Light Giphy (Triggered on receipt) */
@@ -140,7 +139,6 @@ export default function MQTTDashboard() {
               )}
             </div>
           </div>
-
         </div>
 
         {/* Message Logs Feed */}
