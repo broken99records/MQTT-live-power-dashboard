@@ -9,11 +9,12 @@ export default function MQTTDashboard() {
   const [status, setStatus] = useState("Disconnected");
   const [isLit, setIsLit] = useState(false);
 
-  useEffect(() => {
-    const brokerUrl = process.env.NEXT_PUBLIC_MQTT_BROKER_URL;
-    const topic = process.env.NEXT_PUBLIC_MQTT_TOPIC;
+  const brokerUrl = process.env.NEXT_PUBLIC_MQTT_BROKER_URL;
+  const topic = process.env.NEXT_PUBLIC_MQTT_TOPIC;
+  const client = mqtt.connect(brokerUrl);
 
-    const client = mqtt.connect(brokerUrl);
+  useEffect(() => {
+    
 
     // Revert to "unlit" state after 20 seconds (well before the next 10s message)
       const timer = setTimeout(() => {
@@ -48,7 +49,9 @@ export default function MQTTDashboard() {
 
       
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+      }
     });
 
     client.on("error", (err) => {
@@ -98,6 +101,7 @@ export default function MQTTDashboard() {
               src={isLit ? "/lit-room.jpg" : "/unlit-room.png"}
               alt="Room Scene State"
               fill
+              sizes="100vw"
               className="w-full h-full object-cover transition-all duration-500 ease-in-out"
             />
             <div className="absolute top-4 left-4 bg-black/60 px-3 py-1 rounded text-xs font-mono backdrop-blur-sm">
