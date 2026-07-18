@@ -1,36 +1,352 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# MQTT Live Room Dashboard
 
-## Getting Started
+## Overview
 
-First, run the development server:
+The **MQTT Live Room Dashboard** is a real-time web application built with **Next.js** and **MQTT.js** that visualizes incoming MQTT messages through an interactive room simulation. The dashboard is designed for Internet of Things (IoT) applications where sensor data or device events are published to an MQTT broker.
+
+Whenever a message is received on the subscribed MQTT topic, the dashboard updates instantly by:
+
+* Changing the room from a dark state to a lit state.
+* Displaying an animated system reaction.
+* Recording the received message with a timestamp.
+* Automatically reverting the room to its default state after a period of inactivity.
+
+This project demonstrates how MQTT can be integrated into a modern React/Next.js application for real-time monitoring.
+
+---
+
+# Features
+
+* **Real-time MQTT communication**
+
+  * Connects to an MQTT broker using MQTT over WebSockets.
+  * Automatically subscribes to a configured topic.
+
+* **Connection status monitoring**
+
+  * Displays whether the client is:
+
+    * Connected
+    * Disconnected
+    * Error
+
+* **Interactive room simulation**
+
+  * Changes the displayed room image whenever an MQTT message arrives.
+  * Automatically returns to the "unlit" state after 15 seconds without new messages.
+
+* **Animated system feedback**
+
+  * Displays different GIF animations depending on the current room status.
+
+* **Live message log**
+
+  * Shows incoming MQTT messages with timestamps.
+  * Newest messages appear first.
+
+* **Responsive interface**
+
+  * Optimized for desktop and mobile devices using Tailwind CSS.
+
+---
+
+# Technologies Used
+
+* Next.js
+* React
+* MQTT.js
+* Tailwind CSS
+* JavaScript
+* MQTT over WebSockets
+
+---
+
+# Project Structure
+
+```
+project/
+│
+├── app/
+│   └── page.jsx
+│
+├── public/
+│   ├── lit-room.jpg
+│   └── unlit-room.png
+│
+├── .env.local
+├── package.json
+└── README.md
+```
+
+---
+
+# Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/mqtt-live-room-dashboard.git
+```
+
+Navigate into the project directory:
+
+```bash
+cd mqtt-live-room-dashboard
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+or
+
+```bash
+pnpm install
+```
+
+or
+
+```bash
+yarn
+```
+
+---
+
+# Environment Variables
+
+Create a `.env.local` file in the project root.
+
+```env
+NEXT_PUBLIC_MQTT_BROKER_URL=wss://broker.example.com:8884/mqtt
+NEXT_PUBLIC_MQTT_TOPIC=home/power/status
+```
+
+Replace the values with your MQTT broker and topic.
+
+Example using HiveMQ Public Broker:
+
+```env
+NEXT_PUBLIC_MQTT_BROKER_URL=wss://broker.hivemq.com:8884/mqtt
+NEXT_PUBLIC_MQTT_TOPIC=myhome/room1
+```
+
+---
+
+# Running the Application
+
+Start the development server.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open your browser.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+# How It Works
 
-To learn more about Next.js, take a look at the following resources:
+1. The application connects to the configured MQTT broker.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Once connected, it subscribes to the configured topic.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. When a message is received:
 
-## Deploy on Vercel
+   * Connection remains active.
+   * The room image changes from dark to lit.
+   * A reaction animation is displayed.
+   * The message is logged with the current timestamp.
+   * A 15-second countdown begins.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. If another message arrives before the timer expires:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   * The timer resets.
+   * The room remains lit.
+
+5. If no additional messages arrive:
+
+   * The room automatically returns to the unlit state.
+
+---
+
+# Dashboard Components
+
+## Connection Status
+
+Displays the current MQTT connection state.
+
+Possible states:
+
+* Connected
+* Disconnected
+* Error
+
+---
+
+## Room Simulation
+
+The room image visually represents the monitored environment.
+
+### Unlit State
+
+* Displayed by default
+* Indicates no recent MQTT activity
+
+### Lit State
+
+Triggered whenever a new MQTT message is received.
+
+---
+
+## System Mood
+
+Animated GIFs provide visual feedback.
+
+### Default
+
+Displays idle animations.
+
+### Active
+
+Displays an animated "light on" reaction whenever data is received.
+
+---
+
+## Message Logs
+
+Every received MQTT message is stored in a scrolling list.
+
+Each entry contains:
+
+* Time received
+* Message payload
+
+Newest messages appear at the top.
+
+---
+
+# Example MQTT Message
+
+Publishing a message:
+
+```bash
+mosquitto_pub \
+-h broker.hivemq.com \
+-t myhome/room1 \
+-m "Power Available"
+```
+
+The dashboard will immediately:
+
+* Light up the room
+* Display the active animation
+* Record:
+
+```
+10:35:42 AM - Power Available
+```
+
+---
+
+# Customization
+
+You can easily modify:
+
+### Images
+
+Replace:
+
+```
+public/lit-room.jpg
+public/unlit-room.png
+```
+
+with your own room images.
+
+---
+
+### Timer
+
+Current timeout:
+
+```javascript
+15000
+```
+
+Change to any duration (milliseconds).
+
+Example:
+
+```javascript
+30000
+```
+
+for 30 seconds.
+
+---
+
+### MQTT Topic
+
+Simply update:
+
+```env
+NEXT_PUBLIC_MQTT_TOPIC=your/topic
+```
+
+No code changes required.
+
+---
+
+# Possible Applications
+
+This dashboard can be adapted for numerous IoT use cases including:
+
+* Smart home monitoring
+* Electricity availability monitoring
+* Motion detection systems
+* Security monitoring
+* Factory automation
+* Environmental monitoring
+* Occupancy detection
+* Remote equipment monitoring
+
+---
+
+# Future Improvements
+
+Potential enhancements include:
+
+* Historical message storage using PostgreSQL or MongoDB.
+* Real-time charts for sensor values.
+* Multiple room monitoring.
+* Authentication for secure MQTT brokers.
+* Push notifications via Twilio or Firebase Cloud Messaging.
+* User login and role management.
+* Dark/light theme switching.
+* Device health monitoring.
+* MQTT QoS selection.
+* WebSocket reconnection strategy.
+* Offline message persistence.
+* Export message logs as CSV or PDF.
+
+---
+
+# License
+
+This project is provided for educational and research purposes. Feel free to modify and extend it for your own IoT applications.
+
+---
+
+# Author
+
+**Ama Eshiet**
+
+Final Year Project
+
+**Design and Implementation of an IoT-Based Power Supply Monitoring System Using ESP32**
