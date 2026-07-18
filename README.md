@@ -1,8 +1,8 @@
-# MQTT Live Room Dashboard
+# MQTT Live Dashboard
 
 ## Overview
 
-The **MQTT Live Room Dashboard** is a real-time web application built with **Next.js** and **MQTT.js** that visualizes incoming MQTT messages through an interactive room simulation. The dashboard is designed for Internet of Things (IoT) applications where sensor data or device events are published to an MQTT broker.
+The **MQTT Live Dashboard** is a real-time web application built with **Next.js** and **MQTT.js** that visualises incoming MQTT messages through an interactive room simulation. The dashboard is designed for Internet of Things (IoT) applications where sensor data or device events are published to an MQTT broker.
 
 Whenever a message is received on the subscribed MQTT topic, the dashboard updates instantly by:
 
@@ -46,7 +46,7 @@ This project demonstrates how MQTT can be integrated into a modern React/Next.js
 
 * **Responsive interface**
 
-  * Optimized for desktop and mobile devices using Tailwind CSS.
+  * Optimised for desktop and mobile devices using Tailwind CSS.
 
 ---
 
